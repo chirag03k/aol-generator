@@ -6,11 +6,14 @@ import sys
 with open('model.pkl', 'rb') as f:
     model = pickle.load(f)
 
-def generate_text(model, starting_words, num_words=20):
+def generate_text(model, starting_words=None, num_words=20):
+    if starting_words is None:
+        starting_words = random.choice(list(model.keys()))
+        
     sentence = list(starting_words)
 
     for _ in range(num_words):
-        next_options = model[tuple(sentence[-2:])]
+        next_options = model[tuple(sentence[-1:])]
         k = len(next_options)
         if k < 1:
             break
@@ -20,4 +23,7 @@ def generate_text(model, starting_words, num_words=20):
 
     return ' '.join(sentence)
 
-print(generate_text(model, sys.argv[1].split(' ')))
+if len(sys.argv) < 2:
+    print(generate_text(model))
+else:
+    print(generate_text(model, sys.argv[1].split(' ')))
